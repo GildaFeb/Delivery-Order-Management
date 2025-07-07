@@ -1,0 +1,25 @@
+﻿@page
+@model RegisterConfirmationModel
+@{
+    ViewData["Title"] = "Register confirmation";
+}
+
+
+<div class="d-flex justify-content-center align-items-center confirmation-main">
+    <div class="confirmation-box text-center p-5 shadow rounded bg-white">
+        <h1 class="mb-4">@ViewData["Title"]</h1>
+
+        @if (Model.DisplayConfirmAccountLink)
+        {
+            <p class="mb-3 fs-5 text-dark">
+                <a id="confirm-link" class="btn btn-primary" href="@Model.EmailConfirmationUrl">Click here to confirm your account</a>
+            </p>
+        }
+        else
+        {
+            <p class="fs-5 text-dark">
+                Please check your email to confirm your account.
+            </p>
+        }
+    </div>
+</div>
