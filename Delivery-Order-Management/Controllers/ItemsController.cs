@@ -154,5 +154,26 @@ namespace Delivery_Order_Management.Controllers
         {
             return _context.Items.Any(e => e.ItemId == id);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetNextItemCode()
+        {
+            var prefix = "ITM";
+            var existingCodes = await _context.Items
+                .Select(i => i.ItemCode)
+                .ToListAsync();
+
+            int number = 1;
+            string newCode;
+
+            do
+            {
+                newCode = $"{prefix}{number.ToString().PadLeft(3, '0')}";
+                number++;
+            } while (existingCodes.Contains(newCode));
+
+            return Json(newCode);
+        }
+
     }
 }

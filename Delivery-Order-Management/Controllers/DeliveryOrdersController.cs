@@ -27,6 +27,7 @@ namespace Delivery_Order_Management.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
+
         // GET: DeliveryOrders/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -49,13 +50,32 @@ namespace Delivery_Order_Management.Controllers
         // GET: DeliveryOrders/Create
         public IActionResult Create()
         {
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Address");
+            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Name");
             return View();
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetLatestOrderNumber()
+        {
+            var prefix = "DO";
+            var existingOrderNumbers = await _context.DeliveryOrders
+                .Select(o => o.OrderNumber)
+                .ToListAsync();
+
+            int number = 1;
+            string newOrderNumber;
+
+            do
+            {
+                newOrderNumber = $"{prefix}{number.ToString().PadLeft(3, '0')}";
+                number++;
+            } while (existingOrderNumbers.Contains(newOrderNumber));
+
+            return Json(newOrderNumber);
+        }
+
+
         // POST: DeliveryOrders/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("DeliveryOrderId,OrderNumber,OrderDate,DeliveryDate,CustomerId,Status,DeliveryTiming")] DeliveryOrder deliveryOrder)
@@ -66,7 +86,7 @@ namespace Delivery_Order_Management.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Address", deliveryOrder.CustomerId);
+            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Name", deliveryOrder.CustomerId);
             return View(deliveryOrder);
         }
 
@@ -83,7 +103,7 @@ namespace Delivery_Order_Management.Controllers
             {
                 return NotFound();
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Address", deliveryOrder.CustomerId);
+            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Name", deliveryOrder.CustomerId);
             return View(deliveryOrder);
         }
 
@@ -119,7 +139,7 @@ namespace Delivery_Order_Management.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Address", deliveryOrder.CustomerId);
+            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Name", deliveryOrder.CustomerId);
             return View(deliveryOrder);
         }
 

@@ -19,6 +19,7 @@ body {
     position: relative;
     overflow-x: hidden;
     min-height: 100vh;
+    padding: .85rem;
 }
 
     body::before,
@@ -71,9 +72,15 @@ footer {
     z-index: 1030;
 }
 
+.navbar a,
+.navbar a:hover,
+.navbar a:focus,
+.navbar a:active {
+    text-decoration: none !important;
+}
+
 
 /* Register Confirmation */
-
 .confirmation-main{
     height: 80vh;
 }
@@ -87,4 +94,32 @@ footer {
 a#confirm-link.btn {
     font-weight: 500;
     padding: 0.75rem 1.5rem;
+}
+
+.container {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Tables */
+.btn {
+    font-weight: 500;
+}
+
+.card {
+    border-radius: 1rem;
+}
+
+.table thead {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+.table td,
+.table th {
+    vertical-align: middle;
 }

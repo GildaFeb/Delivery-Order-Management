@@ -50,8 +50,8 @@ namespace Delivery_Order_Management.Controllers
         // GET: DeliveryOrderItems/Create
         public IActionResult Create()
         {
-            ViewData["DeliveryOrderId"] = new SelectList(_context.DeliveryOrders, "DeliveryOrderId", "DeliveryTiming");
-            ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "Description");
+            ViewData["DeliveryOrderId"] = new SelectList(_context.DeliveryOrders, "DeliveryOrderId", "OrderNumber");
+            ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemCode");
             return View();
         }
 
@@ -86,8 +86,8 @@ namespace Delivery_Order_Management.Controllers
             {
                 return NotFound();
             }
-            ViewData["DeliveryOrderId"] = new SelectList(_context.DeliveryOrders, "DeliveryOrderId", "DeliveryTiming", deliveryOrderItem.DeliveryOrderId);
-            ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "Description", deliveryOrderItem.ItemId);
+            ViewData["DeliveryOrderId"] = new SelectList(_context.DeliveryOrders, "DeliveryOrderId", "OrderNumber", deliveryOrderItem.DeliveryOrderId);
+            ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "ItemCode", deliveryOrderItem.ItemId);
             return View(deliveryOrderItem);
         }
 

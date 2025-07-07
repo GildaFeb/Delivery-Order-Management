@@ -1,65 +1,151 @@
 ﻿@model IEnumerable<DeliveryOrder>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Delivery Orders";
 }
 
-<h1>Index</h1>
+<!-- Google Fonts: Poppins -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.OrderNumber)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OrderDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DeliveryDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DeliveryTiming)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Customer)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.OrderNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OrderDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DeliveryDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DeliveryTiming)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Customer.Address)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.DeliveryOrderId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.DeliveryOrderId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.DeliveryOrderId">Delete</a>
-            </td>
-        </tr>
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f8f9fa;
+    }
+
+   
+</style>
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-dark">Delivery Orders</h2>
+        <a asp-action="Create" class="btn btn-primary rounded-pill px-4 shadow-sm">
+            <i class="bi bi-plus-circle me-2"></i> Create New
+        </a>
+    </div>
+
+    <div class="mb-3 text-end">
+        <button id="showAllBtn" class="btn btn-outline-secondary rounded-pill me-2">
+            Show All Orders
+        </button>
+        <button id="show7DaysBtn" class="btn btn-secondary rounded-pill">
+            Show Orders Within 7 Days
+        </button>
+    </div>
+
+    <div class="card shadow-sm border-0">
+    
+        <div class="card-body p-0">
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.OrderNumber)</th>
+                            <th>@Html.DisplayNameFor(model => model.OrderDate)</th>
+                            <th>@Html.DisplayNameFor(model => model.DeliveryDate)</th>
+                            <th>@Html.DisplayNameFor(model => model.Status)</th>
+                            <th>@Html.DisplayNameFor(model => model.DeliveryTiming)</th>
+                            <th>@Html.DisplayNameFor(model => model.Customer)</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Reverse())
+                        {
+                            <tr>
+                                <td>@Html.DisplayFor(modelItem => item.OrderNumber)</td>
+                                <td>@Html.DisplayFor(modelItem => item.OrderDate)</td>
+                                <td>@Html.DisplayFor(modelItem => item.DeliveryDate)</td>
+                                <td>
+                                    @if (item.Status == "PENDING")
+                                    {
+                                        <span class="badge bg-warning text-dark">PENDING</span>
+                                    }
+                                    else if (item.Status == "READY TO SHIP")
+                                    {
+                                        <span class="badge bg-primary">READY TO SHIP</span>
+                                    }
+                                    else if (item.Status == "DELIVERED")
+                                    {
+                                        <span class="badge bg-success">DELIVERED</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">@item.Status</span>
+                                    }
+                                </td>
+
+
+                                <td>@Html.DisplayFor(modelItem => item.DeliveryTiming)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Customer.Name)</td>
+                                <td class="text-end">
+                                    <a asp-action="Edit" asp-route-id="@item.DeliveryOrderId" class="btn btn-sm btn-outline-warning rounded-pill me-1">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                    <a asp-action="Details" asp-route-id="@item.DeliveryOrderId" class="btn btn-sm btn-outline-info rounded-pill me-1">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        function filterOrdersWithin7Days() {
+            const rows = document.querySelectorAll("table tbody tr");
+            const today = new Date();
+            const next7Days = new Date();
+            next7Days.setDate(today.getDate() + 7);
+
+            rows.forEach(row => {
+                const deliveryDateText = row.children[2].textContent.trim();
+                const deliveryDate = new Date(deliveryDateText);
+                deliveryDate.setHours(0, 0, 0, 0);
+
+                if (deliveryDate >= today && deliveryDate <= next7Days) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
+
+        function showAllOrders() {
+            document.querySelectorAll("table tbody tr").forEach(row => {
+                row.style.display = "";
+            });
+        }
+
+        function setActiveButton(activeBtn, inactiveBtn) {
+            activeBtn.classList.remove("btn-outline-secondary");
+            activeBtn.classList.add("btn-secondary");
+
+            inactiveBtn.classList.remove("btn-secondary");
+            inactiveBtn.classList.add("btn-outline-secondary");
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const showAllBtn = document.getElementById("showAllBtn");
+            const show7DaysBtn = document.getElementById("show7DaysBtn");
+
+            filterOrdersWithin7Days();
+            setActiveButton(show7DaysBtn, showAllBtn);
+
+            showAllBtn.addEventListener("click", function () {
+                showAllOrders();
+                setActiveButton(showAllBtn, show7DaysBtn);
+            });
+
+            show7DaysBtn.addEventListener("click", function () {
+                filterOrdersWithin7Days();
+                setActiveButton(show7DaysBtn, showAllBtn);
+            });
+        });
+    </script>
 }
-    </tbody>
-</table>

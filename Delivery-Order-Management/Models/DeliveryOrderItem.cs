@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 public class DeliveryOrderItem
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int DeliveryOrderItemId { get; set; }
 
     [Required(ErrorMessage = "Delivery Order ID is required.")]
